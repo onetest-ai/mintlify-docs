@@ -8,8 +8,16 @@ Get up and running with Octo in under 2 minutes. This guide walks you through in
 
 ## Prerequisites
 
-<Check>Python 3.11 or higher</Check>
-<Check>At least one LLM provider account (Anthropic, AWS Bedrock, OpenAI, Azure, or GitHub Models)</Check>
+### Required
+
+<Check>**Python 3.11+** — the runtime for Octo itself</Check>
+<Check>**Node.js 18+** — required for MCP servers (most use `npx`)</Check>
+<Check>**At least one LLM provider** — Anthropic, AWS Bedrock, OpenAI, Azure, or GitHub Models</Check>
+
+### Optional
+
+<Check>**[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — enables project workers that delegate tasks via `claude -p`. Without it, Octo still works with standard and deep research agents.</Check>
+<Check>**[skills.sh](https://skills.sh)** — the open skills ecosystem. Install the CLI with `npm install -g skills` to use `/skills import` and `/skills find` from chat. Local skills (`.octo/skills/`) work without it.</Check>
 
 ## Installation
 
