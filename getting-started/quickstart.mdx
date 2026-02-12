@@ -13,8 +13,27 @@ Get up and running with Octo in under 2 minutes. This guide walks you through in
 
 ## Installation
 
-<Steps>
-  <Step title="Clone and install">
+<Warning>
+Do not install Octo globally. It has many dependencies that can conflict with
+other packages. Always use a virtual environment.
+</Warning>
+
+<Tabs>
+  <Tab title="pip">
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate   # Windows: .venv\Scripts\activate
+    pip install octo-agent
+    ```
+  </Tab>
+  <Tab title="uv">
+    ```bash
+    uv venv
+    source .venv/bin/activate
+    uv pip install octo-agent
+    ```
+  </Tab>
+  <Tab title="From source">
     ```bash
     git clone https://github.com/onetest-ai/Octo.git
     cd Octo
@@ -22,8 +41,14 @@ Get up and running with Octo in under 2 minutes. This guide walks you through in
     source .venv/bin/activate
     pip install -e .
     ```
-  </Step>
+  </Tab>
+</Tabs>
 
+<Info>
+The PyPI package is called `octo-agent`, but the CLI command and Python import are just `octo`.
+</Info>
+
+<Steps>
   <Step title="Run the setup wizard">
     ```bash
     octo init
