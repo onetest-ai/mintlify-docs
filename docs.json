@@ -3,14 +3,14 @@
   "theme": "mint",
   "name": "Octo",
   "colors": {
-    "primary": "#0EA5E9",
-    "light": "#BAE6FD",
-    "dark": "#0369A1"
+    "primary": "#8B5CF6",
+    "light": "#C4B5FD",
+    "dark": "#6D28D9"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "navigation": {
     "tabs": [
