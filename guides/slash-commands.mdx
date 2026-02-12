@@ -1,0 +1,76 @@
+---
+title: Slash Commands
+description: Complete reference for all Octo slash commands
+icon: terminal
+---
+
+## General
+
+| Command | Description |
+|---|---|
+| `/help` | Show available commands |
+| `/clear` | Reset conversation (new thread) |
+| `/compact` | Summarize older messages to free context |
+| `/context` | Show context window usage bar |
+| `exit` | End session |
+| ESC | Abort running agent |
+
+## Agents & Tools
+
+| Command | Description |
+|---|---|
+| `/agents` | List all loaded agents |
+| `/tools` | List MCP tools grouped by server |
+| `/call [server] <tool>` | Call any MCP tool directly |
+| `/<agent> <prompt>` | Send prompt directly to a specific agent |
+
+## Skills
+
+| Command | Description |
+|---|---|
+| `/skills` | List installed skills |
+| `/skills search <query>` | Search the marketplace |
+| `/skills install <name>` | Install a skill (auto-resolves dependencies) |
+| `/skills remove <name>` | Uninstall a skill |
+| `/<skill>` | Invoke an installed skill |
+
+## MCP Servers
+
+| Command | Description |
+|---|---|
+| `/mcp` | Show server status |
+| `/mcp reload` | Reload all servers |
+| `/mcp add` | Interactive wizard to add a server |
+| `/mcp disable <name>` | Disable a server |
+| `/mcp enable <name>` | Re-enable a server |
+| `/mcp remove <name>` | Remove a server |
+
+## Sessions & State
+
+| Command | Description |
+|---|---|
+| `/sessions` | List recent sessions |
+| `/sessions <id>` | Switch to a session |
+| `/plan` | Show current task plan with progress |
+| `/profile [name]` | Show or switch model profile |
+| `/model <name>` | Switch active model |
+
+## Proactive AI
+
+| Command | Description |
+|---|---|
+| `/heartbeat` | Show heartbeat status |
+| `/heartbeat test` | Force a heartbeat tick |
+| `/cron` | List scheduled jobs |
+| `/cron add <spec> <task>` | Schedule a new job |
+| `/cron remove <id>` | Delete a job |
+| `/cron pause <id>` | Pause a job |
+| `/cron resume <id>` | Resume a paused job |
+
+## Other
+
+| Command | Description |
+|---|---|
+| `/projects` | Show project registry |
+| `/create-agent` | AI-assisted agent creation wizard |
+| `/voice on\|off` | Toggle text-to-speech |

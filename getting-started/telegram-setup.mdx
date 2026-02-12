@@ -1,0 +1,92 @@
+---
+title: Telegram Setup
+description: Set up the Telegram bot for mobile access to Octo
+icon: paper-plane
+---
+
+Octo includes a full bidirectional Telegram bot that shares the same conversation thread as the CLI. Chat with your agents from your phone.
+
+## Create a Telegram Bot
+
+<Steps>
+  <Step title="Talk to BotFather">
+    Open Telegram and search for [@BotFather](https://t.me/BotFather). Send:
+
+    ```
+    /newbot
+    ```
+
+    Follow the prompts to name your bot.
+  </Step>
+
+  <Step title="Copy the token">
+    BotFather will give you a token like:
+
+    ```
+    123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+    ```
+  </Step>
+
+  <Step title="Get your Telegram user ID">
+    Talk to [@userinfobot](https://t.me/userinfobot) to get your numeric user ID.
+  </Step>
+
+  <Step title="Configure .env">
+    ```env
+    TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+    TELEGRAM_OWNER_ID=your_numeric_id
+    ```
+  </Step>
+
+  <Step title="Start Octo">
+    ```bash
+    octo
+    ```
+
+    The Telegram bot starts automatically alongside the CLI.
+  </Step>
+</Steps>
+
+## Features
+
+The Telegram transport supports:
+
+- **Text messages** — full conversation with agents
+- **Voice messages** — transcribed via Whisper, replied to with TTS (requires ElevenLabs)
+- **File attachments** — agents send research reports and files as Telegram documents
+- **Proactive messages** — heartbeat and cron results delivered to your phone
+- **Rich formatting** — Markdown-to-HTML conversion for code blocks, bold, lists
+
+## User Authorization
+
+By default, only the owner (configured via `TELEGRAM_OWNER_ID`) can use the bot. Manage access with:
+
+| Command | Description |
+|---|---|
+| `/authorize <user_id>` | Grant access to a user |
+| `/revoke <user_id>` | Remove access |
+
+Authorized users are stored in `.octo/authorized_users.json`.
+
+## Shared State
+
+The Telegram bot shares the same conversation thread and graph lock as the CLI. This means:
+
+- Messages from CLI and Telegram appear in the same conversation
+- Agents have full context regardless of which transport you use
+- The `asyncio.Lock` prevents race conditions between transports
+
+<Warning>
+If you're using both CLI and Telegram simultaneously, messages are serialized through the graph lock. One transport waits while the other's request is being processed.
+</Warning>
+
+## Voice
+
+Enable voice responses with ElevenLabs:
+
+```env
+ELEVENLABS_API_KEY=...
+ELEVENLABS_VOICE_ID=...   # optional, uses default voice
+```
+
+Toggle in chat with `/voice on` or `/voice off`.

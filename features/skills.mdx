@@ -1,0 +1,65 @@
+---
+title: Skills Marketplace
+description: Reusable prompt modules that extend Octo's capabilities
+icon: puzzle-piece
+---
+
+Skills are reusable prompt modules packaged as `SKILL.md` files with YAML frontmatter. They can declare dependencies, requirements, and permissions.
+
+## Managing Skills
+
+<Tabs>
+  <Tab title="From Chat">
+    ```
+    /skills              # list installed skills
+    /skills search pdf   # search marketplace
+    /skills install pdf  # install + auto-install deps + reload
+    /skills remove pdf   # uninstall + reload
+    ```
+  </Tab>
+
+  <Tab title="From CLI">
+    ```bash
+    octo skills search pdf              # search marketplace
+    octo skills info pdf                # detailed info + deps
+    octo skills install pdf             # install with dependency resolution
+    octo skills install pdf --no-deps   # skip dependency installation
+    octo skills remove pdf              # uninstall
+    octo skills update --all            # update all installed
+    octo skills list                    # list installed
+    ```
+  </Tab>
+</Tabs>
+
+## Dependency Resolution
+
+Dependencies declared in `SKILL.md` frontmatter are installed automatically:
+
+| Type | How It's Installed |
+|---|---|
+| **Python** | `pip install` into the active venv |
+| **npm** | `npm install --prefix .octo/` (local node_modules) |
+| **MCP** | Added to `.mcp.json` (activate with `/mcp reload`) |
+| **System** | Displayed for manual installation (e.g. `brew install`) |
+
+At startup, Octo checks installed skills for missing Python deps and logs warnings. At runtime, missing deps are detected and the agent is instructed to install them before proceeding.
+
+## Invoking Skills
+
+Use the skill name as a slash command:
+
+```
+/<skill-name>
+```
+
+## Creating Skills
+
+See [Creating Skills](/guides/creating-skills) for the full guide on writing your own `SKILL.md` files.
+
+## Skill Directories
+
+Octo scans three directories for skills (first match wins):
+
+1. `.octo/skills/` — primary, managed by Octo
+2. `.agents/skills/` — project-level skills
+3. `.claude/skills/` — Claude Code compatible skills

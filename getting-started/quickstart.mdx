@@ -1,0 +1,107 @@
+---
+title: Quick Start
+description: Install Octo and start chatting in under 2 minutes
+icon: rocket
+---
+
+Get up and running with Octo in under 2 minutes. This guide walks you through installation, setup, and your first conversation.
+
+## Prerequisites
+
+<Check>Python 3.11 or higher</Check>
+<Check>At least one LLM provider account (Anthropic, AWS Bedrock, OpenAI, Azure, or GitHub Models)</Check>
+
+## Installation
+
+<Steps>
+  <Step title="Clone and install">
+    ```bash
+    git clone https://github.com/onetest-ai/Octo.git
+    cd Octo
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -e .
+    ```
+  </Step>
+
+  <Step title="Run the setup wizard">
+    ```bash
+    octo init
+    ```
+
+    The wizard walks you through:
+    - Provider selection (Anthropic, Bedrock, OpenAI, Azure, GitHub Models)
+    - Credential entry and validation
+    - Workspace scaffolding (creates `.octo/` directory)
+  </Step>
+
+  <Step title="Start chatting">
+    ```bash
+    octo
+    ```
+  </Step>
+</Steps>
+
+<Tip>
+For a faster setup, use QuickStart mode — just 3 prompts (pick provider, paste key, done):
+
+```bash
+octo init --quick
+```
+</Tip>
+
+## Non-Interactive Setup
+
+For CI/CD or Docker environments:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-... octo init --quick --provider anthropic --no-validate --force
+```
+
+## Health Check
+
+After setup, verify everything is working:
+
+```bash
+octo doctor
+```
+
+This runs 8 checks with PASS/FAIL output. Fix issues with:
+
+```bash
+octo doctor --fix    # re-runs setup wizard on failures
+octo doctor --json   # machine-readable output
+```
+
+## What's Next?
+
+<CardGroup cols={2}>
+  <Card
+    title="Configuration Deep Dive"
+    icon="gear"
+    href="/getting-started/configuration"
+  >
+    Model tiers, profiles, and all environment variables
+  </Card>
+  <Card
+    title="Set Up Telegram"
+    icon="paper-plane"
+    href="/getting-started/telegram-setup"
+  >
+    Chat with Octo from your phone
+  </Card>
+  <Card
+    title="Explore Features"
+    icon="compass"
+    href="/features/multi-agent"
+  >
+    Multi-agent supervisor, proactive AI, and more
+  </Card>
+  <Card
+    title="Create Your First Agent"
+    icon="robot"
+    href="/guides/creating-agents"
+  >
+    Build a custom specialist agent
+  </Card>
+</CardGroup>

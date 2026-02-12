@@ -1,0 +1,69 @@
+---
+title: Model Factory
+description: How Octo creates LLM instances across 5 providers
+icon: industry
+---
+
+The model factory (`octo/models.py`) creates LLM instances for any supported provider. It auto-detects the provider from the model name and handles all provider-specific configuration.
+
+## Supported Providers
+
+| Provider | LangChain Class | Model Pattern |
+|---|---|---|
+| Anthropic | `ChatAnthropic` | `claude-*` |
+| AWS Bedrock | `ChatBedrockConverse` | `*.anthropic.*` |
+| OpenAI | `ChatOpenAI` | `gpt-*`, `o1-*`, `o3-*` |
+| Azure OpenAI | `AzureChatOpenAI` | `gpt-*` + `AZURE_OPENAI_ENDPOINT` |
+| GitHub Models | `ChatAnthropic` or `ChatOpenAI` | `github/*` |
+
+## Auto-Detection
+
+The `_detect_provider()` function checks model names in order:
+
+1. Starts with `github/` → GitHub Models
+2. Contains `.anthropic.` → AWS Bedrock
+3. Starts with `claude-` → Anthropic
+4. Starts with `gpt-`, `o1-`, `o3-` → OpenAI (or Azure if endpoint set)
+
+Override with `LLM_PROVIDER` environment variable.
+
+## Tier System
+
+`make_model(model_name, tier)` accepts a tier parameter:
+
+| Tier | Purpose | Typical Model |
+|---|---|---|
+| `high` | Complex reasoning, planning | Opus |
+| `default` | General chat, routing | Sonnet |
+| `low` | Summarization, cheap tasks | Haiku |
+
+Tiers are resolved to model names via `HIGH_TIER_MODEL`, `DEFAULT_MODEL`, `LOW_TIER_MODEL` in `.env`.
+
+## GitHub Models
+
+GitHub Models is a special provider that auto-routes based on model name:
+
+- `github/claude-*` or `github/anthropic/claude-*` → `ChatAnthropic` with GitHub's Anthropic base URL
+- Everything else → `ChatOpenAI` with GitHub's OpenAI-compatible base URL
+
+Authentication uses `GITHUB_TOKEN` (PAT with `models:read` scope).
+
+## Design Decisions
+
+<AccordionGroup>
+  <Accordion title="Why ChatBedrockConverse instead of ChatBedrock?">
+    `ChatBedrock` fails with tool results ("Extra inputs not permitted"). `ChatBedrockConverse` uses AWS's native `converse` API which handles tool use correctly.
+  </Accordion>
+
+  <Accordion title="Why lazy imports?">
+    Heavy dependencies (boto3, langchain_anthropic, etc.) are imported inside factory functions. This keeps startup fast and avoids import errors when a provider isn't installed.
+  </Accordion>
+
+  <Accordion title="Why singleton Bedrock client?">
+    The boto3 Bedrock client is cached as a singleton to avoid creating new connections on every model instantiation. Configured with `read_timeout=300` and `retries={"max_attempts": 0}` (retries handled by Octo's retry module).
+  </Accordion>
+
+  <Accordion title="Why patch bind_tools?">
+    `ChatBedrockConverse.bind_tools()` stores tools as Pydantic objects instead of dicts. LangGraph's `_should_bind_tools` crashes with `AttributeError`. The patch in `models.py` normalizes tool storage.
+  </Accordion>
+</AccordionGroup>

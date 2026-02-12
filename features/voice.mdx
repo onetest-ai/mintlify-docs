@@ -1,0 +1,36 @@
+---
+title: Voice
+description: Text-to-speech and speech-to-text with ElevenLabs
+icon: microphone
+---
+
+Octo supports voice interaction via ElevenLabs TTS and Whisper STT.
+
+## Setup
+
+```env
+ELEVENLABS_API_KEY=...
+ELEVENLABS_VOICE_ID=...   # optional, uses default voice
+```
+
+## Usage
+
+Toggle voice mode:
+
+```
+/voice on     # enable TTS for responses
+/voice off    # disable TTS
+```
+
+Or start with voice enabled:
+
+```bash
+octo --voice
+```
+
+## Telegram Voice
+
+When using the Telegram transport:
+- **Incoming voice messages** are transcribed via Whisper
+- **Responses** are sent back as voice messages when voice mode is enabled
+- Text responses are always sent alongside voice for accessibility

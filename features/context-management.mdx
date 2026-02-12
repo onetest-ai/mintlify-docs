@@ -1,0 +1,75 @@
+---
+title: Context Management
+description: Three layers of protection against context overflow
+icon: brain
+---
+
+Long conversations can exhaust the model's context window. Octo has three automatic layers of protection plus manual controls.
+
+## Automatic Protection
+
+### Layer 1: Tool Result Truncation
+
+`TruncatingToolNode` at the supervisor level caps tool results at 40K characters. This prevents a single large file read or API response from filling the context window.
+
+Configurable via:
+
+```env
+TOOL_RESULT_LIMIT=40000
+```
+
+### Layer 2: Worker Summarization
+
+`SummarizationMiddleware` on worker agents triggers when:
+- Context reaches 70% capacity, **or**
+- Message count exceeds 100
+
+When triggered, older messages are summarized by a low-tier LLM and replaced with a compact summary, keeping the most recent 20 messages intact.
+
+### Layer 3: Supervisor Auto-Trim
+
+The `pre_model_hook` on the supervisor monitors context usage before every LLM call. When context exceeds 70%, it trims old messages while preserving 40% of the most recent history.
+
+## Manual Controls
+
+### /compact
+
+Force-summarize older messages to free up context:
+
+```
+/compact
+```
+
+Uses a low-tier LLM to summarize old messages, then replaces them with the summary. Useful when you notice responses degrading.
+
+### /context
+
+Visual context window usage bar:
+
+```
+/context
+```
+
+Shows a color-coded progress bar:
+
+| Color | Quality | Usage |
+|---|---|---|
+| Green | PEAK | < 50% |
+| Yellow | GOOD | 50-70% |
+| Orange | DEGRADING | 70-85% |
+| Red | POOR | > 85% |
+
+## Tuning
+
+All thresholds are configurable in `.env`:
+
+```env
+SUMMARIZATION_TRIGGER_FRACTION=0.7     # 0.0–1.0
+SUMMARIZATION_TRIGGER_TOKENS=100000
+SUMMARIZATION_KEEP_TOKENS=20000
+SUPERVISOR_MSG_CHAR_LIMIT=30000        # per-message safety net
+```
+
+<Tip>
+If you notice responses becoming less coherent or losing track of context, run `/context` to check usage, then `/compact` to free space.
+</Tip>

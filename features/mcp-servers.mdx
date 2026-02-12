@@ -1,0 +1,76 @@
+---
+title: MCP Servers
+description: Connect and manage Model Context Protocol servers
+icon: plug
+---
+
+Octo connects to MCP servers defined in `.mcp.json`, making their tools available to all agents. Manage servers live without restarting.
+
+## Configuration
+
+MCP servers are defined in `.mcp.json` at your workspace root:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ghp_YOUR_TOKEN"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "stateful": true
+    }
+  }
+}
+```
+
+See [`.mcp.json.example`](https://github.com/onetest-ai/Octo/blob/main/.mcp.json.example) for a full template.
+
+## Live Management
+
+All commands work without restart:
+
+```
+/mcp              # show status — servers, tools, health
+/mcp reload       # reload all servers
+/mcp add          # interactive wizard to add a server
+/mcp disable X    # disable a server (keeps config)
+/mcp enable X     # re-enable a disabled server
+/mcp remove X     # remove a server entirely
+```
+
+## Calling Tools Directly
+
+Bypass the agent and call any MCP tool directly:
+
+```
+/call github get_file_contents owner=foo repo=bar path=README.md
+/call playwright browser_navigate url=https://example.com
+```
+
+Optionally specify the server name as the first argument if tool names collide.
+
+## OAuth Authentication
+
+Some MCP servers require browser-based OAuth:
+
+```bash
+octo auth login <server>    # opens browser for OAuth flow
+octo auth status            # check token status for all servers
+octo auth logout <server>   # revoke tokens
+```
+
+Tokens are stored in `.octo/oauth/` and reused across sessions.
+
+## Server Types
+
+| Type | Description | Example |
+|---|---|---|
+| `http` | HTTP/SSE endpoint | GitHub Copilot MCP, Tavily, Context7 |
+| `stdio` | Local process via stdin/stdout | Playwright, filesystem tools |
