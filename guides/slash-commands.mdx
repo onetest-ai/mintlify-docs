@@ -32,6 +32,8 @@ icon: terminal
 | `/skills search <query>` | Search the marketplace |
 | `/skills install <name>` | Install a skill (auto-resolves dependencies) |
 | `/skills remove <name>` | Uninstall a skill |
+| `/skills find <query>` | Search skills.sh ecosystem |
+| `/skills import <owner/repo>` | Import skills from a GitHub repo via skills.sh |
 | `/<skill>` | Invoke an installed skill |
 
 ## MCP Servers
@@ -39,8 +41,10 @@ icon: terminal
 | Command | Description |
 |---|---|
 | `/mcp` | Show server status |
+| `/mcp find <query>` | Search the official MCP registry |
+| `/mcp install <name>` | Install from registry with guided wizard |
 | `/mcp reload` | Reload all servers |
-| `/mcp add` | Interactive wizard to add a server |
+| `/mcp add` | Interactive wizard to add a server manually |
 | `/mcp disable <name>` | Disable a server |
 | `/mcp enable <name>` | Re-enable a server |
 | `/mcp remove <name>` | Remove a server |

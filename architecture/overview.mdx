@@ -14,8 +14,8 @@ Console (Rich) ←──────→│                      │←───�
                         │    Supervisor        │←───→ Standard Agents (AGENT.md)
 Telegram Bot   ←──────→│  (create_supervisor) │←───→ Deep Research Agents
                         │                      │
-Heartbeat      ────────→│    asyncio.Lock      │←───→ MCP Tools (.mcp.json)
-Cron Scheduler ────────→│                      │←───→ Built-in Tools
+Heartbeat      ────────→│    asyncio.Lock      │←──→ Built-in Tools (direct)
+Cron Scheduler ────────→│                      │←──→ MCP Tools (deferred proxy)
                         └──────────────────────┘
 ```
 
@@ -43,9 +43,11 @@ Three types of worker agents:
   <Accordion title="Standard Agents" icon="robot">
     Built with `create_agent` from LangGraph. Each gets:
     - Built-in tools (Read, Grep, Glob, Edit, Bash) filtered by `tools:` in AGENT.md
-    - MCP tools from all connected servers
+    - MCP tools via deferred proxy (`find_tools` + `call_mcp_tool`), or directly if the agent specifies a curated `tools:` list
     - `ToolErrorMiddleware` for graceful error handling
     - `SummarizationMiddleware` for context compression
+
+    See [Tool Architecture](/architecture/tool-architecture) for details on deferred vs direct tool binding.
   </Accordion>
 
   <Accordion title="Deep Research Agents" icon="microscope">

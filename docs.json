@@ -64,6 +64,12 @@
               "guides/model-profiles",
               "guides/slash-commands"
             ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "guides/teams-integration"
+            ]
           }
         ]
       },
@@ -74,6 +80,7 @@
             "group": "Internals",
             "pages": [
               "architecture/overview",
+              "architecture/tool-architecture",
               "architecture/model-factory"
             ]
           }

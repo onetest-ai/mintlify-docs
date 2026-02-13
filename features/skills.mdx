@@ -56,6 +56,18 @@ Use the skill name as a slash command:
 
 See [Creating Skills](/guides/creating-skills) for the full guide on writing your own `SKILL.md` files.
 
+## Skills.sh Integration
+
+Discover and import skills from the [skills.sh](https://skills.sh) ecosystem:
+
+```
+/skills find <query>              # search skills.sh registry
+/skills import owner/repo         # install all skills from a repo
+/skills import owner/repo name    # install a specific skill
+```
+
+Imported skills land in `.octo/skills/` and are tagged with `source="skills.sh"` in `/skills list`. The skills.sh format (SKILL.md + YAML frontmatter) is fully compatible with Octo's format.
+
 ## Skill Directories
 
 Octo scans three directories for skills (first match wins):

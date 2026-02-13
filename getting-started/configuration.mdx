@@ -6,6 +6,35 @@ icon: gear
 
 All configuration lives in `.env` at your workspace root. The setup wizard (`octo init`) generates this file, or you can create it manually from [`.env.example`](https://github.com/onetest-ai/Octo/blob/main/.env.example).
 
+## Config File Locations
+
+Octo resolves its workspace by walking up from the current directory looking for `.octo/` or `.env`. If none is found, it falls back to platform defaults.
+
+### Resolution Order
+
+1. Walk up from `cwd` — first directory containing `.octo/` or `.env`
+2. Platform default (if no project workspace found):
+
+| Platform | Default Location | State Dir |
+|---|---|---|
+| macOS / Linux | `~` | `~/.octo/` |
+| Windows | `%LOCALAPPDATA%/octo` | `%LOCALAPPDATA%/octo/.octo/` |
+
+3. Override with `OCTO_HOME` env var — points to the workspace root
+
+### Config File Precedence
+
+Octo checks two locations for `.env` and `.mcp.json`, loading the first it finds:
+
+| File | Primary (checked first) | Fallback |
+|---|---|---|
+| `.env` | `.octo/.env` | `<workspace>/.env` |
+| `.mcp.json` | `.octo/.mcp.json` | `<workspace>/.mcp.json` |
+
+<Tip>
+For global installs (via `uvx` or `uv tool`), keep all config inside `~/.octo/` — create `~/.octo/.env` and `~/.octo/.mcp.json`. This way Octo works from any directory without a project-local workspace.
+</Tip>
+
 ## LLM Providers
 
 Octo supports 5 providers. You only need to configure **one**.
@@ -144,7 +173,9 @@ SUPERVISOR_MSG_CHAR_LIMIT=30000
 
 ## MCP Servers
 
-MCP server configuration lives in `.mcp.json`. See [`.mcp.json.example`](https://github.com/onetest-ai/Octo/blob/main/.mcp.json.example) for a template, and [MCP Servers](/features/mcp-servers) for management commands.
+MCP server configuration lives in `.mcp.json` (checked in `.octo/.mcp.json` first, then workspace root). See [`.mcp.json.example`](https://github.com/onetest-ai/Octo/blob/main/.mcp.json.example) for a template, and [MCP Servers](/features/mcp-servers) for management commands.
+
+Octo includes a built-in [MS Teams server](/guides/teams-integration) — add it to `.mcp.json` for chat integration.
 
 ## Next Steps
 
@@ -152,7 +183,13 @@ MCP server configuration lives in `.mcp.json`. See [`.mcp.json.example`](https:/
   <Card title="Telegram Setup" icon="paper-plane" href="/getting-started/telegram-setup">
     Add Telegram transport
   </Card>
+  <Card title="Teams Integration" icon="comments" href="/guides/teams-integration">
+    Read and send MS Teams messages
+  </Card>
   <Card title="Model Profiles" icon="sliders" href="/guides/model-profiles">
     Fine-tune cost vs quality
+  </Card>
+  <Card title="MCP Servers" icon="plug" href="/features/mcp-servers">
+    Connect external tools via MCP
   </Card>
 </CardGroup>
