@@ -36,7 +36,8 @@
               "features/mcp-servers",
               "features/memory",
               "features/sessions",
-              "features/voice"
+              "features/voice",
+              "features/virtual-persona"
             ]
           },
           {
@@ -68,7 +69,8 @@
           {
             "group": "Integrations",
             "pages": [
-              "guides/teams-integration"
+              "guides/teams-integration",
+              "guides/virtual-persona-setup"
             ]
           }
         ]

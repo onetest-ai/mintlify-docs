@@ -81,6 +81,24 @@ Set `type: deep_research` for agents that need:
 
 Deep agents are built with the `deepagents` library and get their own middleware stack automatically.
 
+## MCP Tool Access
+
+Agents can access MCP tools by listing their exact names in the `tools` field. For example, the built-in `context-gatherer` agent uses Outlook, Teams, and web search tools:
+
+```yaml
+tools:
+  - search-query          # Outlook email search
+  - list-mail-messages    # Outlook email listing
+  - find-chat             # Teams chat search
+  - list-chat-messages    # Teams message history
+  - tavily_search         # Web search
+  - Read                  # Built-in filesystem
+  - Grep
+  - Glob
+```
+
+Agents without a `tools` list get proxy access to all MCP tools via `find_tools()` and `call_mcp_tool()`.
+
 ## Agent Loading
 
 At startup, Octo loads agents from:
