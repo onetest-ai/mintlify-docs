@@ -13,7 +13,7 @@ git clone https://github.com/onetest-ai/Octo.git
 cd Octo
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .
+pip install -e ".[cli]"
 octo init
 ```
 
@@ -26,11 +26,15 @@ octo init
 
 ## Common Changes
 
+Since v0.5.0, the package is split into two layers: `octo/core/` (embeddable engine) and `octo/` root (CLI-specific code). Root-level files like `graph.py` and `middleware.py` are backward-compat re-export shims.
+
 | Change Type | Files to Update |
 |---|---|
 | New LLM provider | config.py, models.py, wizard/onboarding.py, wizard/validators.py, wizard/doctor.py, README.md |
 | New slash command | cli.py, ui.py |
-| New built-in tool | tools/, graph.py |
+| New built-in tool | core/tools/, core/graph.py |
+| New middleware | core/middleware.py |
+| New storage backend | core/storage/ |
 
 ## Reporting Issues
 

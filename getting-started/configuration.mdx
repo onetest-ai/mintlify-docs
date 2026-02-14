@@ -103,7 +103,7 @@ The model factory auto-detects the provider from the model name:
 | `github/*` | GitHub Models |
 | `eu.anthropic.*`, `us.anthropic.*` | AWS Bedrock |
 | `claude-*` | Anthropic direct |
-| `gpt-*`, `o1-*`, `o3-*` | OpenAI |
+| `gpt-*`, `o1-*`, `o3-*`, `o4-*` | OpenAI |
 | `gpt-*` + `AZURE_OPENAI_ENDPOINT` set | Azure OpenAI |
 
 Override with `LLM_PROVIDER` if needed:
@@ -162,13 +162,16 @@ TOOL_RESULT_LIMIT=40000
 
 # Context window summarization triggers (whichever fires first)
 SUMMARIZATION_TRIGGER_FRACTION=0.7
-SUMMARIZATION_TRIGGER_TOKENS=100000
+SUMMARIZATION_TRIGGER_TOKENS=40000
 
 # Tokens of recent history to keep after summarization
-SUMMARIZATION_KEEP_TOKENS=20000
+SUMMARIZATION_KEEP_TOKENS=8000
 
 # Supervisor per-message char limit
 SUPERVISOR_MSG_CHAR_LIMIT=30000
+
+# Timeout for claude -p subprocess calls (seconds)
+CLAUDE_CODE_TIMEOUT=2400
 ```
 
 ## MCP Servers

@@ -80,26 +80,44 @@ All transports share an `asyncio.Lock` to prevent concurrent graph invocations.
 
 ## File Map
 
+Since v0.5.0, the package is split into two layers:
+
+- **`octo/core/`** — the embeddable engine. No env vars, no CLI dependencies. Can be used in any Python service via `OctoEngine`.
+- **`octo/`** root — CLI-specific code (Rich UI, Telegram, heartbeat). Root-level files like `graph.py` and `middleware.py` are backward-compat re-export shims that delegate to `core/`.
+
 ```
 octo/
-├── cli.py           # Click CLI + async chat loop (entry point)
-├── graph.py         # Supervisor graph assembly + tools
-├── models.py        # Model factory (5 providers)
-├── config.py        # .env loading, constants
-├── context.py       # System prompt composition
-├── middleware.py     # Tool errors, truncation, summarization
-├── heartbeat.py     # Heartbeat + cron scheduler
-├── telegram.py      # Telegram bot transport
-├── sessions.py      # Session registry
-├── callbacks.py     # LangChain callback handler (UI)
-├── ui.py            # Rich console (banners, input, help)
-├── voice.py         # ElevenLabs TTS + Whisper STT
-├── abort.py         # ESC-to-abort terminal listener
-├── retry.py         # Auto-retry with exponential backoff
-├── tools/           # Built-in tools (filesystem, shell, claude_code)
-├── loaders/         # Agent, MCP, and skill loaders
-├── wizard/          # Setup wizard + health check
-└── oauth/           # Browser-based OAuth for MCP
+├── core/                # Embeddable engine
+│   ├── graph.py         # Supervisor graph assembly + tools
+│   ├── middleware.py     # Tool errors, truncation, summarization
+│   ├── constants.py     # Pure data (profiles, ProjectConfig)
+│   ├── config.py        # OctoConfig dataclass
+│   ├── engine.py        # OctoEngine (invoke / stream / close)
+│   ├── _builder.py      # Graph builder from OctoConfig
+│   ├── tools/           # Built-in + memory + planning + MCP proxy
+│   ├── loaders/         # Agent, MCP, and skill loaders
+│   ├── storage/         # StorageBackend, FilesystemStorage, S3Storage
+│   └── checkpointing/   # SQLite + PostgreSQL checkpointer factory
+│
+├── cli.py               # Click CLI + async chat loop (entry point)
+├── config.py            # .env loading → re-exports from core.constants
+├── models.py            # Model factory (5 providers, config injection)
+├── graph.py             # Re-export shim → core.graph
+├── middleware.py         # Re-export shim → core.middleware
+├── tools/               # Re-export shim → core.tools
+├── loaders/             # Re-export shim → core.loaders
+├── context.py           # System prompt composition
+├── heartbeat.py         # Heartbeat + cron scheduler
+├── telegram.py          # Telegram bot transport
+├── sessions.py          # Session registry
+├── callbacks.py         # LangChain callback handler (UI)
+├── ui.py                # Rich console (banners, input, help)
+├── voice.py             # ElevenLabs TTS + Whisper STT
+├── abort.py             # ESC-to-abort terminal listener
+├── retry.py             # Auto-retry with exponential backoff
+├── wizard/              # Setup wizard + health check
+├── oauth/               # Browser-based OAuth for MCP
+└── virtual_persona/     # VP Teams monitoring (12 files)
 ```
 
 ## Request Flow

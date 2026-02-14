@@ -83,7 +83,8 @@
             "pages": [
               "architecture/overview",
               "architecture/tool-architecture",
-              "architecture/model-factory"
+              "architecture/model-factory",
+              "architecture/embedding"
             ]
           }
         ]

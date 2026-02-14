@@ -31,14 +31,14 @@ other packages. Always use a virtual environment.
     ```bash
     python3 -m venv .venv
     source .venv/bin/activate   # Windows: .venv\Scripts\activate
-    pip install octo-agent
+    pip install "octo-agent[cli]"
     ```
   </Tab>
   <Tab title="uv">
     ```bash
     uv venv
     source .venv/bin/activate
-    uv pip install octo-agent
+    uv pip install "octo-agent[cli]"
     ```
   </Tab>
   <Tab title="From source">
@@ -47,13 +47,25 @@ other packages. Always use a virtual environment.
     cd Octo
     python3 -m venv .venv
     source .venv/bin/activate
-    pip install -e .
+    pip install -e ".[cli]"
     ```
   </Tab>
 </Tabs>
 
 <Info>
 The PyPI package is called `octo-agent`, but the CLI command and Python import are just `octo`.
+
+**Installation extras:**
+
+| Extra | What it adds |
+|-------|-------------|
+| `cli` | Rich terminal UI, Click, prompt_toolkit **(recommended)** |
+| `telegram` | Telegram bot transport |
+| `s3` | S3-compatible storage backend |
+| `postgres` | PostgreSQL checkpointing |
+| `all` | Everything above |
+
+Bare `pip install octo-agent` installs the core engine only — use `[cli]` for the terminal experience, or `[all]` for everything.
 </Info>
 
 <Steps>

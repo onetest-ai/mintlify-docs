@@ -6,13 +6,15 @@ icon: industry
 
 The model factory (`octo/models.py`) creates LLM instances for any supported provider. It auto-detects the provider from the model name and handles all provider-specific configuration.
 
+Since v0.5.0, the factory supports two modes: **CLI mode** (reads credentials from environment/module globals) and **Engine mode** (accepts a `config` dict — safe for embedding in services).
+
 ## Supported Providers
 
 | Provider | LangChain Class | Model Pattern |
 |---|---|---|
 | Anthropic | `ChatAnthropic` | `claude-*` |
 | AWS Bedrock | `ChatBedrockConverse` | `*.anthropic.*` |
-| OpenAI | `ChatOpenAI` | `gpt-*`, `o1-*`, `o3-*` |
+| OpenAI | `ChatOpenAI` | `gpt-*`, `o1-*`, `o3-*`, `o4-*` |
 | Azure OpenAI | `AzureChatOpenAI` | `gpt-*` + `AZURE_OPENAI_ENDPOINT` |
 | GitHub Models | `ChatAnthropic` or `ChatOpenAI` | `github/*` |
 
@@ -23,13 +25,25 @@ The `_detect_provider()` function checks model names in order:
 1. Starts with `github/` → GitHub Models
 2. Contains `.anthropic.` → AWS Bedrock
 3. Starts with `claude-` → Anthropic
-4. Starts with `gpt-`, `o1-`, `o3-` → OpenAI (or Azure if endpoint set)
+4. Starts with `gpt-`, `o1-`, `o3-`, `o4-` → OpenAI (or Azure if endpoint set)
 
 Override with `LLM_PROVIDER` environment variable.
 
+## Signature
+
+```python
+make_model(model_name="", tier="default", *, config=None) -> BaseChatModel
+```
+
+| Parameter | Description |
+|---|---|
+| `model_name` | Explicit model ID. If empty, resolved from tier. |
+| `tier` | `"high"`, `"default"`, or `"low"` — resolved to a model name via env vars. |
+| `config` | Optional credentials dict for engine mode. Bypasses module-level globals. |
+
 ## Tier System
 
-`make_model(model_name, tier)` accepts a tier parameter:
+The `tier` parameter maps to configured model names:
 
 | Tier | Purpose | Typical Model |
 |---|---|---|
@@ -60,10 +74,37 @@ Authentication uses `GITHUB_TOKEN` (PAT with `models:read` scope).
   </Accordion>
 
   <Accordion title="Why singleton Bedrock client?">
-    The boto3 Bedrock client is cached as a singleton to avoid creating new connections on every model instantiation. Configured with `read_timeout=300` and `retries={"max_attempts": 0}` (retries handled by Octo's retry module).
+    In CLI mode, the boto3 Bedrock client is cached as a singleton to avoid creating new connections on every model instantiation. In engine mode, a fresh client is created per config (no caching) to support multi-config embedding. Both are configured with `read_timeout=300` and `retries={"max_attempts": 0}` (retries handled by Octo's retry module).
   </Accordion>
 
   <Accordion title="Why patch bind_tools?">
     `ChatBedrockConverse.bind_tools()` stores tools as Pydantic objects instead of dicts. LangGraph's `_should_bind_tools` crashes with `AttributeError`. The patch in `models.py` normalizes tool storage.
   </Accordion>
 </AccordionGroup>
+
+## Engine Mode (Embedding)
+
+When embedding Octo in a service, pass a `config` dict to bypass environment variables:
+
+```python
+from octo.models import make_model
+
+model = make_model("claude-sonnet-4-5-20250929", config={
+    "provider": "anthropic",
+    "api_key": "sk-ant-...",
+})
+```
+
+The config dict accepts these keys (all optional, provider-dependent):
+
+| Key | Used By |
+|---|---|
+| `provider` | All — overrides auto-detection |
+| `api_key` | Anthropic, GitHub, OpenAI, Azure |
+| `openai_api_key` | OpenAI |
+| `azure_api_key`, `azure_endpoint`, `azure_api_version` | Azure |
+| `region`, `access_key_id`, `secret_access_key` | Bedrock |
+| `github_token`, `github_base_url`, `github_anthropic_base_url` | GitHub Models |
+| `default_model`, `high_tier_model`, `low_tier_model` | All — tier resolution |
+
+See [Embeddable Engine](/architecture/embedding) for the full embedding API (`OctoEngine` + `OctoConfig`).
