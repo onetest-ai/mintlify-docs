@@ -6,6 +6,35 @@ icon: puzzle-piece
 
 Skills are reusable prompt modules that extend Octo's capabilities. Each skill is a directory containing a `SKILL.md` file with YAML frontmatter.
 
+## Interactive Wizard
+
+The fastest way to create a skill:
+
+```
+/create-skill
+```
+
+The wizard guides you through:
+
+<Steps>
+  <Step title="Name and description">
+    Validated format with collision detection against existing skills. Description doubles as the trigger — describe WHEN to use the skill.
+  </Step>
+  <Step title="Purpose">
+    Detailed description of what the skill does, its workflow, and expected input/output.
+  </Step>
+  <Step title="Settings">
+    Model invocation (can the LLM trigger it?), permissions (filesystem, network, shell), and tags.
+  </Step>
+  <Step title="AI generation">
+    An LLM generates the full skill body based on your description, using existing skills as examples. The SKILL.md is previewed before saving.
+  </Step>
+</Steps>
+
+Skills are immediately available after the graph rebuilds.
+
+## Manual Creation
+
 ## SKILL.md Format
 
 ```markdown
