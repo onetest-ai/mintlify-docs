@@ -70,7 +70,8 @@
             "group": "Integrations",
             "pages": [
               "guides/teams-integration",
-              "guides/virtual-persona-setup"
+              "guides/virtual-persona-setup",
+              "guides/langfuse-integration"
             ]
           }
         ]

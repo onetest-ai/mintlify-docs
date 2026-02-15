@@ -1,24 +1,33 @@
 ---
 title: Context Management
-description: Three layers of protection against context overflow
+description: Four layers of protection against context overflow
 icon: brain
 ---
 
-Long conversations can exhaust the model's context window. Octo has three automatic layers of protection plus manual controls.
+Long conversations can exhaust the model's context window. Octo has four automatic layers of protection plus manual controls.
 
 ## Automatic Protection
 
 ### Layer 1: Tool Result Truncation
 
-`TruncatingToolNode` at the supervisor level caps tool results at 40K characters. This prevents a single large file read or API response from filling the context window.
+`TruncatingToolNode` at the supervisor level caps tool results at 20K characters before they enter the checkpoint. This prevents a single large file read or API response from filling the context window.
 
 Configurable via:
 
 ```env
-TOOL_RESULT_LIMIT=40000
+TOOL_RESULT_LIMIT=20000
 ```
 
-### Layer 2: Worker Summarization
+### Layer 2: Tool Result Aging
+
+After each invocation, `auto_trim_tool_results` scans the checkpoint for old tool results (beyond the last 10 messages). Results exceeding 4K characters are:
+
+1. **Saved to disk** at `.octo/workspace/<date>/tool-result-<name>-<ts>.md`
+2. **Replaced in the checkpoint** with a truncated version containing a file path reference
+
+This keeps the checkpoint lean while preserving full data on disk. The agent can retrieve the original result via the Read tool if needed.
+
+### Layer 3: Worker Summarization
 
 `SummarizationMiddleware` on worker agents triggers when:
 - Context reaches 70% capacity, **or**
@@ -26,7 +35,7 @@ TOOL_RESULT_LIMIT=40000
 
 When triggered, older messages are summarized by a low-tier LLM and replaced with a compact summary, keeping the most recent 20 messages intact.
 
-### Layer 3: Supervisor Auto-Trim
+### Layer 4: Supervisor Auto-Trim
 
 The `pre_model_hook` on the supervisor monitors context usage before every LLM call. When context exceeds 70%, it trims old messages while preserving 40% of the most recent history.
 
@@ -71,5 +80,5 @@ SUPERVISOR_MSG_CHAR_LIMIT=30000        # per-message safety net
 ```
 
 <Tip>
-If you notice responses becoming less coherent or losing track of context, run `/context` to check usage, then `/compact` to free space.
+If you notice responses becoming less coherent or losing track of context, run `/context` to check usage, then `/compact` to free space. Old tool results are automatically saved to `.octo/workspace/` before removal — the agent can retrieve them if needed.
 </Tip>

@@ -158,7 +158,7 @@ Colon-separated. Each directory is scanned for `*/AGENT.md` files.
 
 ```env
 # Max chars for a single tool result before truncation
-TOOL_RESULT_LIMIT=40000
+TOOL_RESULT_LIMIT=20000
 
 # Context window summarization triggers (whichever fires first)
 SUMMARIZATION_TRIGGER_FRACTION=0.7
@@ -173,6 +173,19 @@ SUPERVISOR_MSG_CHAR_LIMIT=30000
 # Timeout for claude -p subprocess calls (seconds)
 CLAUDE_CODE_TIMEOUT=2400
 ```
+
+## Observability (Langfuse)
+
+Octo supports [Langfuse](https://langfuse.com) tracing for monitoring AI decisions, token usage, and cost. Toggle with a single env var:
+
+```env
+LANGFUSE_ENABLED=true
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_HOST=https://cloud.langfuse.com  # optional, for self-hosted
+```
+
+See [Langfuse Integration](/guides/langfuse-integration) for full setup guide.
 
 ## MCP Servers
 
