@@ -1,10 +1,10 @@
 ---
 title: Context Management
-description: Four layers of protection against context overflow
+description: Five layers of protection against context overflow plus prompt caching
 icon: brain
 ---
 
-Long conversations can exhaust the model's context window. Octo has four automatic layers of protection plus manual controls.
+Long conversations can exhaust the model's context window. Octo has five automatic layers of protection plus manual controls.
 
 ## Automatic Protection
 
@@ -38,6 +38,34 @@ When triggered, older messages are summarized by a low-tier LLM and replaced wit
 ### Layer 4: Supervisor Auto-Trim
 
 The `pre_model_hook` on the supervisor monitors context usage before every LLM call. When context exceeds 70%, it trims old messages while preserving 40% of the most recent history.
+
+### Layer 5: Prompt Caching
+
+Prompt caching reduces cost and latency by reusing previously processed context. Octo injects provider-specific cache hints automatically:
+
+| Provider | Mechanism | Savings | How |
+|---|---|---|---|
+| **Anthropic** | `cache_control: {"type": "ephemeral"}` | ~90% on cached tokens | Two breakpoints: system message + conversation prefix |
+| **AWS Bedrock** | `cachePoint` blocks | ~90% on cached tokens | System message breakpoint |
+| **OpenAI / Azure** | Automatic prefix caching | ~50% on prefixes ≥1024 tokens | No injection needed — free |
+| **Gemini** | N/A | — | Uses Google's server-side caching |
+| **Local** | N/A | — | Depends on inference server |
+
+Caching is applied at two levels:
+- **Workers**: `AnthropicPromptCachingMiddleware` + `BedrockCachingMiddleware` in the middleware stack
+- **Supervisor**: Cache breakpoints injected by `pre_model_hook` into `llm_input_messages`
+
+## Context Window Sizes
+
+Octo auto-detects the context limit from the model name:
+
+| Model | Context Window |
+|---|---|
+| Claude (all) | 200,000 tokens |
+| GPT-4o | 128,000 tokens |
+| o1, o3, o4 | 200,000 tokens |
+| Gemini 2.5 | 1,000,000 tokens |
+| Local models | 32,000 tokens (conservative default) |
 
 ## Manual Controls
 

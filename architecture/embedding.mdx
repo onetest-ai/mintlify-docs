@@ -38,7 +38,7 @@ The configuration dataclass. Caller provides everything — no env var reading.
 
 | Field | Type | Description |
 |---|---|---|
-| `llm_provider` | `str` | `"anthropic"`, `"openai"`, `"bedrock"`, `"azure"`, or `"github"` |
+| `llm_provider` | `str` | `"anthropic"`, `"openai"`, `"bedrock"`, `"azure"`, `"github"`, `"gemini"`, or `"local"` |
 | `llm_credentials` | `dict` | Provider-specific credentials (see below) |
 
 ### Credential Keys by Provider
@@ -50,6 +50,8 @@ The configuration dataclass. Caller provides everything — no env var reading.
 | Bedrock | `region`, `access_key_id`, `secret_access_key` | — |
 | Azure | `api_key`, `endpoint` | `api_version` |
 | GitHub | `api_key` | `base_url`, `anthropic_base_url` |
+| Gemini | `api_key` | — |
+| Local | — | `base_url`, `api_key` |
 
 ### Optional Fields
 

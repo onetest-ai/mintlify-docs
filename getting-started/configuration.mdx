@@ -37,7 +37,7 @@ For global installs (via `uvx` or `uv tool`), keep all config inside `~/.octo/` 
 
 ## LLM Providers
 
-Octo supports 5 providers. You only need to configure **one**.
+Octo supports 7 providers. You only need to configure **one** — or mix multiple providers across tiers.
 
 <Tabs>
   <Tab title="Anthropic">
@@ -92,25 +92,73 @@ Octo supports 5 providers. You only need to configure **one**.
     - `github/claude-*` → ChatAnthropic
     - Everything else → ChatOpenAI
   </Tab>
+
+  <Tab title="Google Gemini">
+    Gemini 2.5 Flash, Pro, and Flash-Lite via Google AI Studio.
+
+    ```env
+    GOOGLE_API_KEY=AI...
+    DEFAULT_MODEL=gemini-2.5-flash
+    ```
+
+    Also accepts `GEMINI_API_KEY` as an alias. Auto-detects Vertex AI from environment variables.
+  </Tab>
+
+  <Tab title="Local / Custom">
+    Any OpenAI-compatible endpoint — vLLM, Ollama, llama.cpp, etc.
+
+    ```env
+    OPENAI_API_BASE=http://localhost:8000/v1
+    DEFAULT_MODEL=local/llama3
+    ```
+
+    The `local/` prefix is required to distinguish from the `openai` provider. API key is optional (defaults to `not-needed`).
+  </Tab>
 </Tabs>
 
 ## Auto-Detection
 
-The model factory auto-detects the provider from the model name:
+The model factory auto-detects the provider from the model name. Use the **universal `provider/` prefix** for explicit routing, or rely on legacy heuristics for unprefixed names:
 
 | Model name pattern | Provider |
 |---|---|
-| `github/*` | GitHub Models |
-| `eu.anthropic.*`, `us.anthropic.*` | AWS Bedrock |
-| `claude-*` | Anthropic direct |
-| `gpt-*`, `o1-*`, `o3-*`, `o4-*` | OpenAI |
-| `gpt-*` + `AZURE_OPENAI_ENDPOINT` set | Azure OpenAI |
+| `anthropic/claude-*` | Anthropic (prefix) |
+| `bedrock/eu.anthropic.*` | AWS Bedrock (prefix) |
+| `openai/gpt-*` | OpenAI (prefix) |
+| `gemini/gemini-*` | Google Gemini (prefix) |
+| `local/llama3` | Local / Custom (prefix) |
+| `github/openai/gpt-4.1` | GitHub Models (prefix) |
+| `claude-*` | Anthropic (heuristic) |
+| `gemini-*` | Google Gemini (heuristic) |
+| `eu.anthropic.*`, `us.anthropic.*` | AWS Bedrock (heuristic) |
+| `gpt-*`, `o1-*`, `o3-*`, `o4-*` | OpenAI (heuristic) |
+| `gpt-*` + `AZURE_OPENAI_ENDPOINT` set | Azure OpenAI (heuristic) |
 
 Override with `LLM_PROVIDER` if needed:
 
 ```env
-LLM_PROVIDER=bedrock  # anthropic | bedrock | openai | azure | github
+LLM_PROVIDER=bedrock  # anthropic | bedrock | openai | azure | github | gemini | local
 ```
+
+## Mixed Providers
+
+You can use different providers for each tier — just use `provider/` prefixes in your model names and leave `LLM_PROVIDER` unset:
+
+```env
+# Each tier auto-detects its provider from the prefix
+HIGH_TIER_MODEL=anthropic/claude-sonnet-4-5-20250929
+DEFAULT_MODEL=gemini/gemini-2.5-flash
+LOW_TIER_MODEL=local/llama3
+
+# Provide credentials for each provider used
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AI...
+OPENAI_API_BASE=http://localhost:8000/v1
+```
+
+<Tip>
+Mixed providers are great for cost optimization: use a powerful cloud model for complex reasoning, a fast Gemini model for general routing, and a free local model for summarization.
+</Tip>
 
 ## Model Tiers
 

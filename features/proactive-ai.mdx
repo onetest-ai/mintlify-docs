@@ -81,6 +81,20 @@ Agents can schedule their own follow-ups using the `schedule_task` tool. For exa
 
 Jobs are stored in `.octo/cron.json` and survive restarts.
 
+## Error Recovery
+
+Both heartbeat and cron jobs use `invoke_with_retry` — the same retry logic as interactive chat. Transient failures are handled automatically:
+
+| Error Type | Recovery |
+|---|---|
+| **Connection dropped** | Reset Bedrock client, clean orphaned tool calls, retry with backoff |
+| **Timeout** | Retry with backoff; auto-compact context on 2nd timeout |
+| **Rate limit** | Wait with longer backoff (5s, 15s, 45s) |
+| **Context overflow** | Auto-compact conversation, then retry |
+| **Orphaned tool calls** | Inject synthetic tool responses, then retry |
+
+Up to 3 retries with exponential backoff (3s → 9s → 27s). If all retries fail, the error is logged and the job continues on its next schedule.
+
 <Tip>
 Combine heartbeat with cron for powerful workflows: use heartbeat for general monitoring and cron for specific scheduled tasks.
 </Tip>
