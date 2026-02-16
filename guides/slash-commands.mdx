@@ -100,6 +100,17 @@ icon: terminal
 | `/vp persona show` | Preview current persona prompt |
 | `/vp persona analysis` | Show communication analysis summary |
 
+## System
+
+| Command | Description |
+|---|---|
+| `/reload` | Hot-reload graph (re-reads `.env`, MCP servers, agents, skills) |
+| `/restart` | Cold-restart process via `os.execv` (same thread for continuity) |
+
+<Tip>
+`/reload` is a superset of `/mcp reload` — it also re-reads `.env` and reloads the config module, so new API keys or model changes take effect without restarting.
+</Tip>
+
 ## Other
 
 | Command | Description |
@@ -108,3 +119,7 @@ icon: terminal
 | `/create-agent` | AI-assisted agent creation wizard |
 | `/create-skill` | AI-assisted skill creation wizard |
 | `/voice on\|off` | Toggle text-to-speech |
+
+## Telegram
+
+All commands above are CLI-only. The Telegram bot has its own command set for remote management — see [Telegram Setup](/getting-started/telegram-setup) for the full list.
