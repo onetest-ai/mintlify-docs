@@ -61,6 +61,19 @@ Available to all agents (configurable per agent via `tools:` in AGENT.md):
 | `Bash` | Execute shell commands |
 | `claude_code` | Delegate to Claude Code CLI (`claude -p`) |
 
+## Agent Lifecycle Tools
+
+Every worker agent automatically receives two lifecycle tools (even if not listed in AGENT.md):
+
+| Tool | Description |
+|---|---|
+| `task_complete(summary)` | Signal that work is done. The summary is the **only** thing the user sees — without this, the agent's work is lost. |
+| `escalate_question(question)` | Ask the user a question when blocked. The question is relayed through the supervisor. |
+
+<Note>
+These tools are injected into every agent's system prompt automatically. Agents are instructed to always call `task_complete` before finishing — never silently transfer back to the supervisor.
+</Note>
+
 ## Supervisor-Only Tools
 
 The supervisor has additional tools not available to workers:
@@ -71,6 +84,7 @@ The supervisor has additional tools not available to workers:
 | `write_memory` / `update_long_term_memory` | Persistent memory across sessions |
 | `update_state` | Update project STATE.md |
 | `schedule_task` | Schedule cron jobs |
+| `dispatch_background` | Spawn a [background worker](/features/background-workers) task |
 | `send_file` | Send files via Telegram |
 
 ## Direct Agent Access

@@ -30,6 +30,7 @@
             "group": "Features",
             "pages": [
               "features/multi-agent",
+              "features/background-workers",
               "features/proactive-ai",
               "features/context-management",
               "features/skills",

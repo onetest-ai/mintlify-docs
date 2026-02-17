@@ -68,7 +68,7 @@ Always show your work — include the commands you ran and their output.
 | `name` | Yes | Agent identifier (lowercase, hyphens ok) |
 | `description` | Yes | One-line description shown in `/agents` and used by supervisor for routing |
 | `type` | No | `""` for standard, `"deep_research"` for deep agents |
-| `tools` | No | List of built-in tool names. Omit to get all built-in tools |
+| `tools` | No | List of tool names (built-in, lifecycle, or MCP). Omit to get all built-in tools + MCP proxy |
 
 ## Deep Research Agents
 
@@ -80,6 +80,20 @@ Set `type: deep_research` for agents that need:
 - **Sub-agent spawning** — delegate subtasks
 
 Deep agents are built with the `deepagents` library and get their own middleware stack automatically.
+
+## Tool Resolution
+
+When you list tools in the `tools:` field, Octo resolves each name against three sources in order:
+
+1. **Built-in tools** — `Read`, `Grep`, `Glob`, `Edit`, `Bash`
+2. **Lifecycle tools** — `task_complete`, `escalate_question` (auto-added even if not listed)
+3. **MCP tools** — any tool from configured MCP servers
+
+If a tool name can't be found in any source, Octo logs a warning at startup. This helps catch typos in AGENT.md.
+
+<Note>
+Every agent automatically gets `task_complete` and `escalate_question` regardless of the `tools:` list. These lifecycle tools ensure agents always report results back to the user.
+</Note>
 
 ## MCP Tool Access
 
