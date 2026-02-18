@@ -69,6 +69,10 @@ Tasks are stored as JSON files in `.octo/tasks/`. They survive restarts — on n
 | `BG_MAX_CONCURRENT` | `3` | Maximum parallel background tasks |
 | `ADDITIONAL_CLAUDE_ARGS` | — | Extra flags injected into all `claude -p` subprocess calls |
 
+<Note>
+Process tasks run with **no timeout** by default — they complete when the subprocess exits naturally. The supervisor can set an explicit timeout (in seconds) when dispatching via the `dispatch_background` tool if needed. You can always cancel a task manually with `/task <id> cancel`.
+</Note>
+
 ## Next Steps
 
 <CardGroup cols={2}>
