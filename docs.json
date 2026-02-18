@@ -38,7 +38,8 @@
               "features/memory",
               "features/sessions",
               "features/voice",
-              "features/virtual-persona"
+              "features/virtual-persona",
+              "features/swarm"
             ]
           },
           {
